@@ -169,6 +169,7 @@ def outside(server, wrapper):
         content.mkdir()
         shutil.copy2(server, content / 'cognate-server')
         shutil.copy2(wrapper or package / 'run.sh', content / 'run.sh')
+        shutil.copy2(package / 'tests/startup.py', workspace / 'startup.py')
         for scenario in ('fresh', 'upgrade', 'volume-symlink', 'readonly-volume',
                          'unsafe-platform-ancestor', 'external-ancestor'):
             volume = workspace / scenario
@@ -183,7 +184,7 @@ def outside(server, wrapper):
                        '--proc', '/proc', '--dev', '/dev', '--bind', str(workspace), '/test',
                        '--dir', '/lzcapp', '--dir', '/lzcapp/pkg',
                        '--ro-bind', str(content), '/lzcapp/pkg/content',
-                       '--ro-bind', str(package / 'tests/startup.py'), '/startup.py']
+                       '--ro-bind', str(workspace / 'startup.py'), '/startup.py']
             if scenario == 'volume-symlink':
                 command += ['--symlink', '/test/' + scenario, '/lzcapp/var']
             else:

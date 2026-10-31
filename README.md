@@ -3,7 +3,7 @@
 Cognate 服务端的 LPK v2 Exec 打包仓库，仅发布喵喵商店，官方商店关闭。
 
 - 包名：`community.lazycat.app.cognate`，新应用默认 `community.lazycat.app` 前缀。
-- 当前候选：`0.1.0-rc.6`，最低 lzcos `1.6.2`，目标 Linux amd64。
+- 当前候选：`0.1.0-rc.7`，最低 lzcos `1.6.2`，目标 Linux amd64。
 - 源码：`upstream.env` 固定上游 tag 和完整 commit；不从浮动 main 构建。
 - 构建：Go `1.27.3`、Node `26.12.0`、`CGO_ENABLED=0`，Web 嵌入服务端，不依赖 Docker。
 - 运行：`exec://8080` 仅监听 loopback，数据和密钥持久保存在 `/lzcapp/var/cognate`，不写应用文稿。
@@ -39,6 +39,8 @@ LPK 输出在 `.lazycat-build/`，内容目录为 `dist/content/`，避免把包
 本地 CLI 打包前先执行 `mkdir -p .lazycat-build`；GitHub Action 负责创建自己的产物目录。
 
 本地启动回归：先构建固定上游，再运行 `python3 tests/startup.py --server "$PWD/dist/content/cognate-server" --wrapper "$PWD/dist/content/run.sh"`，需要 Linux、Python 3、bubblewrap 和可用的 user namespace。测试只修改临时目录和隔离命名空间中的挂载，不修改本机 `/lzcapp`。CI 在 root 下执行同一用例，必须通过后才运行 LPK 构建及商店发布。
+
+rc.6 的 CI `41171336131` 在 namespace 挂载测试脚本时被 runner checkout 祖先权限拒绝，尚未进入应用启动或商店发布；保留失败 tag，不移动、不重试绕过门禁。rc.7 将测试脚本与二进制一样复制到本轮测试用户拥有的临时目录后再挂载，不修改 runner home 权限或应用检查。应用修正逻辑与上游固定版本不变。
 
 根目录 `npm run build` 是同一构建脚本的便捷入口；根 lockfile 为 reusable workflow 的 Node 工具链缓存提供有效输入，Web 依赖仍由固定上游的真实 lockfile 经 `npm ci` 校验。`v0.1.0-rc.1` 的首轮在 Node 缓存缺少根 lockfile 时失败，未构建 LPK、未发布商店，保留原失败与原 tag，不重写为成功。
 
