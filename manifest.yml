@@ -8,6 +8,11 @@ application:
   routes:
     - /=exec://8080,/lzcapp/pkg/content/run.sh
   environment:
+    - {{ printf "%q" (printf "COGNATE_BOOTSTRAP_ADMIN_USERNAME=%s" .U.admin_username) }}
+    - {{ printf "%q" (printf "COGNATE_BOOTSTRAP_ADMIN_PASSWORD=%s" .U.admin_password) }}
+    - {{ printf "%q" (printf "COGNATE_ADMIN_USER_IDS=%s" .U.admin_user_ids) }}
+    - {{ printf "%q" (printf "COGNATE_LAZYCAT_OIDC_ENABLED=%v" .U.enable_oidc) }}
+    - {{ printf "%q" (printf "COGNATE_GITHUB_CLIENT_ID=%s" .U.github_client_id) }}
     - LAZYCAT_APP_DOMAIN=${LAZYCAT_APP_DOMAIN}
     - LAZYCAT_AUTH_OIDC_ISSUER_URI=${LAZYCAT_AUTH_OIDC_ISSUER_URI}
     - LAZYCAT_AUTH_OIDC_CLIENT_ID=${LAZYCAT_AUTH_OIDC_CLIENT_ID}

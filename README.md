@@ -3,16 +3,22 @@
 Cognate 服务端的 LPK v2 Exec 打包仓库，仅发布喵喵商店，官方商店关闭。
 
 - 包名：`community.lazycat.app.cognate`，新应用默认 `community.lazycat.app` 前缀。
-- 首包候选：`0.1.0-rc.2`，最低 lzcos `1.6.2`，目标 Linux amd64。
+- 当前候选：`0.1.0-rc.3`，最低 lzcos `1.6.2`，目标 Linux amd64。
 - 源码：`upstream.env` 固定上游 tag 和完整 commit；不从浮动 main 构建。
 - 构建：Go `1.27.3`、Node `26.12.0`、`CGO_ENABLED=0`，Web 嵌入服务端，不依赖 Docker。
 - 运行：`exec://8080` 仅监听 loopback，数据和密钥持久保存在 `/lzcapp/var/cognate`，不写应用文稿。
 
 ## 账号与数据
 
+安装向导提供首次管理员用户名、secret 密码、已有管理员账号 UUID、OIDC 开关与 GitHub OAuth 公开 client ID。空实例默认创建 `admin`，密码由平台随机生成，安装前请保存。升级保持用户名不变；更改安装密码不会重置已有账号，原密码仍有效。已有用户但没有初始化记录时，请清空首次用户名并填写原账号 UUID；不会自动提权普通账号。管理员沿用全局日志管理权限，不可读取其他用户的私有技能或凭据。
+
+初始化密码经 `0600` 私有文件交给服务端，不进入 argv、子进程环境或日志；`keys/bootstrap.secret` 是受限的安装输入文件。重启已有初始化记录时不读取该文件，删除输入文件也不影响原密码。关闭 OIDC 时保留本地登录且不调用平台 discovery；开启时仍需平台注入的完整 OIDC 参数。
+
 使用平台注入的 `LAZYCAT_AUTH_OIDC_ISSUER_URI`、client ID 和 client secret，接入上游既有标准 OIDC discovery；回调为 `/auth/oidc/callback`，不信任外部身份头。保留 Cognate 本地账号，已有账号须显式绑定 OIDC，不按邮箱合并。
 
 启动脚本仅在主密钥不存在时以私有权限创建 32 字节随机密钥，升级不覆盖；OIDC secret 经私有文件传给进程，不放入命令参数或日志。请备份整个私有数据目录和原主密钥，丢失主密钥无法解密已有凭据。卸载前另行备份，不能依赖卸载保留内部状态。
+
+状态目录创建后转换为物理规范路径，以兼容祖先挂载路径别名；仍拒绝 key/data 叶节点符号链接，不覆盖或放宽已有主密钥的大小、权限和所有权检查。本地真实服务已复现旧包装脚本在别名场景下的拒绝，新脚本 health 200 且原密钥保持不变；用户设备没有可用安装环境，未获取元数据或完成真机验收。
 
 当前是服务端预览包，不包含 CLI 或桌面 GUI。完整云备份/恢复、全部 agent 配置应用与 Pack 自动应用未完成，见[上游 TODO](https://github.com/ca-x/cognate/blob/2bb9b137e124a89833d3c66f1c59018d7e8e44c5/docs/TODO.md)。懒猫真机部署、平台 OIDC 和手机文件选择器仍须实测，不将构建成功称作真机验收或官方商店合规。
 
@@ -35,3 +41,9 @@ LPK 输出在 `.lazycat-build/`，内容目录为 `dist/content/`，避免把包
 商店响应接受应用 `670`、版本 `3752`，使用同一 GitHub Release Asset URL 和上述 SHA256；官方商店步骤未启用。此记录不声称商店前台可见或真机部署已通过。后续 rc 包发布后也须核对 GitHub prerelease 标记，不能仅凭数字版本当作正式版。
 
 本地已通过 shell 语法、actionlint、512px 图标检查，以及隔离环境下的主密钥保留、私有权限、secret 文件交接、不进入 argv/进程环境、缺少 OIDC 与符号链接拒绝测试；真实服务端与平台身份交互仍待真机验证。
+
+## rc.3 候选验证
+
+上游固定 `server-v0.1.0-rc.3` / `577ed79bacce981c474fe434094115780885efa1`，全仓 Go 7,444 PASS、158 SKIP、0 FAIL，六平台/架构服务端 CGO0 编译通过。本地 `lzc-cli project lint`、actionlint、真实 LPK 构建通过；包内包含 `deploy_params.yml`，与声明逐字一致。直接从本地 LPK 提取的真实服务端通过别名路径启动、原主密钥保留、首次管理员 Login/全局日志授权，以及更换或移除密码输入文件后的两次重启检查；密码不进入 argv、子进程环境或捕获日志。
+
+本地构建 LPK SHA256 `ec62fe0d81121987ee03b52845c05eb725f09711ae425b76601d63d9a8d5b147` 只是本地验证产物，不代表后续 CI Release 的最终字节。初次 HTTPS 源码克隆无进展后中断，改用本地临时 Git SSH 路由，不修改上游 URL；本地 CLI 需要先创建 `.lazycat-build/`。保留原失败日志，均不称产品回归。rc.3 的 CI/商店发布和用户盒子安装状态须另行核实；不将本地通过称作真机成功。

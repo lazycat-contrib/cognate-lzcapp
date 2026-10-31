@@ -1,5 +1,5 @@
 package: community.lazycat.app.cognate
-version: 0.1.0-rc.2
+version: 0.1.0-rc.3
 name: Cognate
 description: Skill 聚合、分发与同步服务
 min_os_version: 1.6.2

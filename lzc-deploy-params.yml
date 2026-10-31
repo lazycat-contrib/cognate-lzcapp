@@ -1,0 +1,48 @@
+params:
+  - id: admin_username
+    type: string
+    name: Initial administrator username
+    description: "For an empty instance only. Use 3–64 ASCII letters, digits, dots, underscores or hyphens. Keep the same username on upgrades. Leave empty for existing instances and use account IDs instead; existing users are never promoted automatically."
+    default_value: admin
+    optional: true
+  - id: admin_password
+    type: secret
+    name: Initial administrator password
+    description: "8–1024 bytes, used only when creating the first administrator. Save this password before installation. Changing this setting does not reset an existing password."
+    default_value: "$random(len=32)"
+    optional: true
+  - id: admin_user_ids
+    type: string
+    name: Administrator account IDs
+    description: "Optional comma-separated Cognate account UUIDs, up to 32. Sign in first and copy your account ID from the server logging page, then update these settings. This grants global logging administration, not access to other users' private skills."
+    default_value: ""
+    optional: true
+  - id: enable_oidc
+    type: bool
+    name: Enable LazyCat OIDC
+    description: "Use the platform's OIDC login. Local Cognate accounts remain available. Existing accounts must explicitly bind OIDC."
+    default_value: "true"
+    optional: false
+  - id: github_client_id
+    type: string
+    name: GitHub OAuth application client ID
+    description: "Optional public client ID for GitHub device flow. Do not enter a client secret or access token."
+    default_value: ""
+    optional: true
+locales:
+  zh:
+    admin_username:
+      name: 首次管理员用户名
+      description: "仅空实例使用，3–64 位英文字母、数字、点、下划线或连字符；升级时保持用户名不变。已有用户的实例请留空，改填管理员账号 ID，不会自动提升已有账号权限。"
+    admin_password:
+      name: 首次管理员密码
+      description: "8–1024 字节，仅首次创建管理员时使用，安装前请保存密码；修改此设置不会重置已有密码。"
+    admin_user_ids:
+      name: 管理员账号 ID
+      description: "可选，填写最多 32 个 Cognate 站内账号 UUID，用英文逗号分隔。先登录，在服务端日志页面复制自己的账号 ID，再修改此设置。只授予全局日志管理权限，不开放其他用户的私有技能。"
+    enable_oidc:
+      name: 启用懒猫 OIDC 登录
+      description: 使用平台 OIDC，同时保留 Cognate 本地账号；已有账号仍须显式绑定。
+    github_client_id:
+      name: GitHub OAuth 应用客户端 ID
+      description: 可选，用于 GitHub device flow 的公开 client ID；不要填写 client secret 或 access token。
