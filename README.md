@@ -3,7 +3,7 @@
 Cognate 服务端的 LPK v2 Exec 打包仓库，仅发布喵喵商店，官方商店关闭。
 
 - 包名：`community.lazycat.app.cognate`，新应用默认 `community.lazycat.app` 前缀。
-- 当前候选：`0.1.0-rc.3`，最低 lzcos `1.6.2`，目标 Linux amd64。
+- 当前候选：`0.1.0-rc.4`，最低 lzcos `1.6.2`，目标 Linux amd64。
 - 源码：`upstream.env` 固定上游 tag 和完整 commit；不从浮动 main 构建。
 - 构建：Go `1.27.3`、Node `26.12.0`、`CGO_ENABLED=0`，Web 嵌入服务端，不依赖 Docker。
 - 运行：`exec://8080` 仅监听 loopback，数据和密钥持久保存在 `/lzcapp/var/cognate`，不写应用文稿。
@@ -32,6 +32,8 @@ LPK 输出在 `.lazycat-build/`，内容目录为 `dist/content/`，避免把包
 
 本地构建：安装上述版本后运行 `bash build.sh`，再用 `lzc-cli project build` 或同一 GitHub Action 验证 LPK。目标架构由 `LAZYCAT_TARGET_ARCH` 控制，当前发布配置为 amd64；改为 arm64 时须同步修改 Action 配置并单独验收。
 
+本地 CLI 打包前先执行 `mkdir -p .lazycat-build`；GitHub Action 负责创建自己的产物目录。
+
 根目录 `npm run build` 是同一构建脚本的便捷入口；根 lockfile 为 reusable workflow 的 Node 工具链缓存提供有效输入，Web 依赖仍由固定上游的真实 lockfile 经 `npm ci` 校验。`v0.1.0-rc.1` 的首轮在 Node 缓存缺少根 lockfile 时失败，未构建 LPK、未发布商店，保留原失败与原 tag，不重写为成功。
 
 ## 首包交付记录
@@ -47,3 +49,7 @@ LPK 输出在 `.lazycat-build/`，内容目录为 `dist/content/`，避免把包
 上游固定 `server-v0.1.0-rc.3` / `577ed79bacce981c474fe434094115780885efa1`，全仓 Go 7,444 PASS、158 SKIP、0 FAIL，六平台/架构服务端 CGO0 编译通过。本地 `lzc-cli project lint`、actionlint、真实 LPK 构建通过；包内包含 `deploy_params.yml`，与声明逐字一致。直接从本地 LPK 提取的真实服务端通过别名路径启动、原主密钥保留、首次管理员 Login/全局日志授权，以及更换或移除密码输入文件后的两次重启检查；密码不进入 argv、子进程环境或捕获日志。
 
 本地构建 LPK SHA256 `ec62fe0d81121987ee03b52845c05eb725f09711ae425b76601d63d9a8d5b147` 只是本地验证产物，不代表后续 CI Release 的最终字节。初次 HTTPS 源码克隆无进展后中断，改用本地临时 Git SSH 路由，不修改上游 URL；本地 CLI 需要先创建 `.lazycat-build/`。保留原失败日志，均不称产品回归。rc.3 的 CI/商店发布和用户盒子安装状态须另行核实；不将本地通过称作真机成功。
+
+`v0.1.0-rc.3` 的 Actions `41166452977` 在构建前被 SDK 原始 Manifest 解码拒绝：整项 `{{ printf ... }}` 环境模板不能被此预检查当作普通 YAML 字符串。该 run 没有构建 CI LPK，也没有上传 GitHub Release 或商店，保留原 tag，不重写为成功。
+
+rc.4 保留同一服务端源码，仅将安装参数改为受支持的 `KEY={{ .U.parameter | b64enc }}` 普通标量。编码只是安全穿过 YAML，不是加密；密码进入脚本后立即清除原环境变量，直接解码到私有文件，保留换行和特殊字符，不通过 shell 字符串重建密码。使用与失败 CI 一致的 Action v1.3.7 二进制取得旧模板普通 RED、新模板预检查 PASS；没有渲染带虚构参数的 Manifest。正式上传仍由新版本 run 完成，官方商店继续关闭。

@@ -2,6 +2,25 @@
 set -eu
 umask 077
 
+bootstrap_password_encoded=${COGNATE_BOOTSTRAP_ADMIN_PASSWORD_BASE64:-}
+unset COGNATE_BOOTSTRAP_ADMIN_PASSWORD_BASE64 COGNATE_BOOTSTRAP_ADMIN_PASSWORD
+decode_setting() {
+  printf '%s' "$1" | base64 -d && printf '.'
+}
+if [ "${COGNATE_BOOTSTRAP_ADMIN_USERNAME_BASE64+x}" = x ]; then
+  decoded=$(decode_setting "$COGNATE_BOOTSTRAP_ADMIN_USERNAME_BASE64") || { printf 'Invalid encoded administrator username\n' >&2; exit 1; }
+  COGNATE_BOOTSTRAP_ADMIN_USERNAME=${decoded%.}
+fi
+if [ "${COGNATE_ADMIN_USER_IDS_BASE64+x}" = x ]; then
+  decoded=$(decode_setting "$COGNATE_ADMIN_USER_IDS_BASE64") || { printf 'Invalid encoded administrator IDs\n' >&2; exit 1; }
+  COGNATE_ADMIN_USER_IDS=${decoded%.}
+fi
+if [ "${COGNATE_GITHUB_CLIENT_ID_BASE64+x}" = x ]; then
+  decoded=$(decode_setting "$COGNATE_GITHUB_CLIENT_ID_BASE64") || { printf 'Invalid encoded GitHub client ID\n' >&2; exit 1; }
+  export COGNATE_GITHUB_CLIENT_ID="${decoded%.}"
+fi
+unset decoded COGNATE_BOOTSTRAP_ADMIN_USERNAME_BASE64 COGNATE_BOOTSTRAP_ADMIN_PASSWORD_BASE64 COGNATE_ADMIN_USER_IDS_BASE64 COGNATE_GITHUB_CLIENT_ID_BASE64
+
 state=${COGNATE_LAZYCAT_STATE:-/lzcapp/var/cognate}
 case "$state" in
   /*) ;;
@@ -82,17 +101,20 @@ if [ -n "${COGNATE_BOOTSTRAP_ADMIN_USERNAME:-}" ]; then
     printf 'Unsafe Cognate administrator password file\n' >&2
     exit 1
   fi
-  if [ -n "${COGNATE_BOOTSTRAP_ADMIN_PASSWORD:-}" ]; then
+  if [ -n "$bootstrap_password_encoded" ]; then
     secret=$(mktemp "$state/keys/.bootstrap.XXXXXXXX")
     trap 'rm -f "$secret"' 0
-    printf '%s' "$COGNATE_BOOTSTRAP_ADMIN_PASSWORD" > "$secret"
+    if ! printf '%s' "$bootstrap_password_encoded" | base64 -d > "$secret"; then
+      printf 'Invalid encoded administrator password\n' >&2
+      exit 1
+    fi
     mv -f "$secret" "$state/keys/bootstrap.secret"
     trap - 0
   fi
   set -- "$@" --bootstrap-admin-username "$COGNATE_BOOTSTRAP_ADMIN_USERNAME" \
     --bootstrap-admin-password-file "$state/keys/bootstrap.secret"
 fi
-unset COGNATE_BOOTSTRAP_ADMIN_USERNAME COGNATE_BOOTSTRAP_ADMIN_PASSWORD
+unset bootstrap_password_encoded COGNATE_BOOTSTRAP_ADMIN_USERNAME COGNATE_BOOTSTRAP_ADMIN_PASSWORD
 count=0
 previous_ifs=$IFS
 IFS=', '
