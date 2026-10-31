@@ -3,7 +3,7 @@
 Cognate 服务端的 LPK v2 Exec 打包仓库，仅发布喵喵商店，官方商店关闭。
 
 - 包名：`community.lazycat.app.cognate`，新应用默认 `community.lazycat.app` 前缀。
-- 当前候选：`0.1.0-rc.5`，最低 lzcos `1.6.2`，目标 Linux amd64。
+- 当前候选：`0.1.0-rc.6`，最低 lzcos `1.6.2`，目标 Linux amd64。
 - 源码：`upstream.env` 固定上游 tag 和完整 commit；不从浮动 main 构建。
 - 构建：Go `1.27.3`、Node `26.12.0`、`CGO_ENABLED=0`，Web 嵌入服务端，不依赖 Docker。
 - 运行：`exec://8080` 仅监听 loopback，数据和密钥持久保存在 `/lzcapp/var/cognate`，不写应用文稿。
@@ -16,9 +16,13 @@ Cognate 服务端的 LPK v2 Exec 打包仓库，仅发布喵喵商店，官方�
 
 使用平台注入的 `LAZYCAT_AUTH_OIDC_ISSUER_URI`、client ID 和 client secret，接入上游既有标准 OIDC discovery；回调为 `/auth/oidc/callback`，不信任外部身份头。保留 Cognate 本地账号，已有账号须显式绑定 OIDC，不按邮箱合并。
 
-启动脚本仅在主密钥不存在时以私有权限创建 32 字节随机密钥，升级不覆盖；OIDC secret 经私有文件传给进程，不放入命令参数或日志。请备份整个私有数据目录和原主密钥，丢失主密钥无法解密已有凭据。卸载前另行备份，不能依赖卸载保留内部状态。
+启动脚本显式传递 `--data-dir /lzcapp/var/cognate/data`、`--key-file /lzcapp/var/cognate/keys/master.key` 和 `--init-key-if-missing`，不再使用 shell 命令生成主密钥。服务端只为无数据的新实例生成 32 字节随机密钥，升级保留原密钥；已有数据但丢失密钥时拒绝重新生成。OIDC secret 经私有文件传给进程，不放入命令参数或日志。请备份整个私有数据目录和原主密钥，丢失主密钥无法解密已有凭据。卸载前另行备份，不能依赖卸载保留内部状态。
 
-状态目录创建后转换为物理规范路径，以兼容祖先挂载路径别名；仍拒绝 key/data 叶节点符号链接，不覆盖或放宽已有主密钥的大小、权限和所有权检查。本地真实服务已复现旧包装脚本在别名场景下的拒绝，新脚本 health 200 且原密钥保持不变；用户设备没有可用安装环境，未获取元数据或完成真机验收。
+状态目录创建后转换为物理规范路径，以兼容祖先挂载路径别名；仍拒绝 key/data 叶节点符号链接，不覆盖或放宽已有主密钥的大小、权限和所有权检查。`root` 是合法运行身份，不因 UID 0 拒绝。
+
+用户 rc.5 真机日志显示密钥 `0600`、UID 0、32 字节、单硬链接，但应用卷祖先为无 sticky bit 的 `0777`，触发严格路径校验。官方 SDK 的 `docs/app-runtime.md` 将 `/lzcapp/var` 定义为该应用的备份数据目录，`docs/other.md` 给出应用所属用户与 `0700` 的权限约定。rc.6 仅在使用 `/lzcapp/var` 下的状态路径时检查固定应用卷为当前用户拥有的真实目录，然后将该卷收紧至 `0700`；不递归 chown、不修改 `/lzcapp`、文稿或其他平台目录，不调整自定义外部状态路径的祖先。只读、符号链接或非当前用户拥有的卷明确拒绝。
+
+本地使用独立 user/mount/network namespace，以 UID 0 和 `0777` 的 `/lzcapp/var` 复现旧拒绝；修正后的实际二进制及原始包装脚本 health 200，显式目录参数、初始管理员授权、升级后原密码和密钥、重新放宽卷权限后的重启均通过。符号链接/只读卷、自定义外部不可信祖先、公开权限/多硬链接密钥和已有数据库丢密钥均拒绝。隔离环境验证不等于懒猫真机安装或平台 OIDC 验收。
 
 当前是服务端预览包，不包含 CLI 或桌面 GUI。完整云备份/恢复、全部 agent 配置应用与 Pack 自动应用未完成，见[上游 TODO](https://github.com/ca-x/cognate/blob/2bb9b137e124a89833d3c66f1c59018d7e8e44c5/docs/TODO.md)。懒猫真机部署、平台 OIDC 和手机文件选择器仍须实测，不将构建成功称作真机验收或官方商店合规。
 
@@ -33,6 +37,8 @@ LPK 输出在 `.lazycat-build/`，内容目录为 `dist/content/`，避免把包
 本地构建：安装上述版本后运行 `bash build.sh`，再用 `lzc-cli project build` 或同一 GitHub Action 验证 LPK。目标架构由 `LAZYCAT_TARGET_ARCH` 控制，当前发布配置为 amd64；改为 arm64 时须同步修改 Action 配置并单独验收。
 
 本地 CLI 打包前先执行 `mkdir -p .lazycat-build`；GitHub Action 负责创建自己的产物目录。
+
+本地启动回归：先构建固定上游，再运行 `python3 tests/startup.py --server "$PWD/dist/content/cognate-server" --wrapper "$PWD/dist/content/run.sh"`，需要 Linux、Python 3、bubblewrap 和可用的 user namespace。测试只修改临时目录和隔离命名空间中的挂载，不修改本机 `/lzcapp`。CI 在 root 下执行同一用例，必须通过后才运行 LPK 构建及商店发布。
 
 根目录 `npm run build` 是同一构建脚本的便捷入口；根 lockfile 为 reusable workflow 的 Node 工具链缓存提供有效输入，Web 依赖仍由固定上游的真实 lockfile 经 `npm ci` 校验。`v0.1.0-rc.1` 的首轮在 Node 缓存缺少根 lockfile 时失败，未构建 LPK、未发布商店，保留原失败与原 tag，不重写为成功。
 

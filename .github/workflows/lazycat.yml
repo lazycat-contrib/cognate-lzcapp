@@ -16,7 +16,24 @@ concurrency:
   group: lazycat-${{ github.ref }}
   cancel-in-progress: false
 jobs:
+  startup-smoke:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: 1.27.3
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 26.12.0
+      - name: Install isolated startup test runtime
+        run: sudo apt-get update && sudo apt-get install --yes --no-install-recommends bubblewrap
+      - name: Build the pinned server and wrapper
+        run: bash build.sh
+      - name: Verify root-owned private storage and upgrade safety
+        run: sudo python3 tests/startup.py --server "$PWD/dist/content/cognate-server" --wrapper "$PWD/dist/content/run.sh"
   lazycat:
+    needs: startup-smoke
     uses: ca-x/lazycat-github-action/.github/workflows/lazycat.yml@v1
     with:
       operation: auto

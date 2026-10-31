@@ -26,6 +26,38 @@ case "$state" in
   /*) ;;
   *) printf 'Cognate state directory must be absolute\n' >&2; exit 1 ;;
 esac
+case "$state" in
+  /lzcapp/var|/lzcapp/var/*)
+    if [ -L /lzcapp/var ] || [ ! -d /lzcapp/var ]; then
+      printf 'Unsafe LazyCat application volume\n' >&2
+      exit 1
+    fi
+    for ancestor in / /lzcapp; do
+      if [ -L "$ancestor" ] || [ ! -d "$ancestor" ]; then
+        printf 'Unsafe LazyCat application volume ancestor\n' >&2
+        exit 1
+      fi
+      owner=$(stat -c '%u' "$ancestor")
+      permissions=$(stat -c '%a' "$ancestor")
+      if { [ "$owner" != 0 ] && [ "$owner" != "$(id -u)" ]; } || [ "$((0$permissions & 0022))" -ne 0 ]; then
+        printf 'Unsafe LazyCat application volume ancestor\n' >&2
+        exit 1
+      fi
+    done
+    if [ "$(stat -c '%u' /lzcapp/var)" != "$(id -u)" ]; then
+      printf 'LazyCat application volume must be owned by the current user\n' >&2
+      exit 1
+    fi
+    if ! chmod 700 /lzcapp/var; then
+      printf 'Cannot secure LazyCat application volume\n' >&2
+      exit 1
+    fi
+    if [ "$(stat -c '%a' /lzcapp/var)" != 700 ]; then
+      printf 'LazyCat application volume did not retain private permissions\n' >&2
+      exit 1
+    fi
+    ;;
+esac
 if [ -L "$state" ]; then
   printf 'Unsafe Cognate state directory\n' >&2
   exit 1
@@ -45,21 +77,6 @@ key="$state/keys/master.key"
 if [ -L "$key" ]; then
   printf 'Unsafe Cognate master key\n' >&2
   exit 1
-fi
-if [ ! -e "$key" ]; then
-  candidate=$(mktemp "$state/keys/.master.XXXXXXXX")
-  trap 'rm -f "$candidate"' 0
-  head -c 32 /dev/urandom > "$candidate"
-  if [ "$(wc -c < "$candidate")" -ne 32 ]; then
-    printf 'Cognate master key generation returned an invalid size\n' >&2
-    exit 1
-  fi
-  if ! ln "$candidate" "$key"; then
-    printf 'Cognate master key creation unconfirmed\n' >&2
-    exit 1
-  fi
-  rm -f "$candidate"
-  trap - 0
 fi
 
 if [ -z "${LAZYCAT_APP_DOMAIN:-}" ]; then
@@ -98,6 +115,7 @@ unset LAZYCAT_AUTH_OIDC_CLIENT_SECRET
 set -- "$(dirname "$0")/cognate-server" \
   --data-dir "$state/data" \
   --key-file "$key" \
+  --init-key-if-missing \
   --listen 127.0.0.1:8080 \
   --public-origin "https://$LAZYCAT_APP_DOMAIN"
 if [ -n "${COGNATE_BOOTSTRAP_ADMIN_USERNAME:-}" ]; then
