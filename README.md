@@ -40,7 +40,7 @@ LPK 输出在 `.lazycat-build/`，内容目录为 `dist/content/`，避免把包
 
 本地启动回归：先构建固定上游，再运行 `python3 tests/startup.py --server "$PWD/dist/content/cognate-server" --wrapper "$PWD/dist/content/run.sh"`，需要 Linux、Python 3、bubblewrap 和可用的 user namespace。测试只修改临时目录和隔离命名空间中的挂载，不修改本机 `/lzcapp`。CI 在 root 下执行同一用例，必须通过后才运行 LPK 构建及商店发布。
 
-rc.6 的 CI `41171336131` 在 namespace 挂载测试脚本时被 runner checkout 祖先权限拒绝，尚未进入应用启动或商店发布；保留失败 tag，不移动、不重试绕过门禁。rc.7 将测试脚本与二进制一样复制到本轮测试用户拥有的临时目录后再挂载，不修改 runner home 权限或应用检查。应用修正逻辑与上游固定版本不变。
+rc.6 的 CI `41171336131` 在 namespace 挂载 runner checkout 中的测试脚本时报告 `Permission denied`，尚未进入应用启动或商店发布；保留失败 tag，不移动、不重试绕过门禁。rc.7 将测试脚本与二进制一样复制到本轮测试用户拥有的临时目录后再挂载，不修改 runner home 权限或应用检查。应用修正逻辑与上游固定版本不变。
 
 根目录 `npm run build` 是同一构建脚本的便捷入口；根 lockfile 为 reusable workflow 的 Node 工具链缓存提供有效输入，Web 依赖仍由固定上游的真实 lockfile 经 `npm ci` 校验。`v0.1.0-rc.1` 的首轮在 Node 缓存缺少根 lockfile 时失败，未构建 LPK、未发布商店，保留原失败与原 tag，不重写为成功。
 
@@ -71,3 +71,15 @@ Actions `41166888272` 已成功，喵喵接受 app `670` / version `3753`，LPK 
 rc.5 本地真实 LPK 构建、提取 binary/wrapper 一致性及完整启动回归通过。额外构造「key 32 字节/0600 但祖先目录 0777 无 sticky」和「key 硬链接数 2」两种不同原因，均被核心拒绝，诊断能区分且不含密钥内容；不把这两种构造归因于用户设备。新脚本在全新目录自动创建私有 32 字节密钥并取得真实 health 200。预览标签增加成功后的 prerelease/no-latest 自动校正，不依赖每次手动修改 Release。
 
 rc.5 Actions `41167603186` completed/success；喵喵接受 app `670` / version `3754`，68,022,272 字节 LPK 的 SHA256 `6eda03732a17f27592ac76c9ddc0f3f0e53e1c0b393e443a73fca0b3066a5626` 与 GitHub Release Asset digest 一致。公开 prerelease，官方商店关闭。请从新启动日志回传 `Cognate storage diagnostics:` 行，无需进入应用终端；尚未收到这些设备元数据，故障仍未确认修复。
+
+## rc.7 私有卷修正交付
+
+随后收到的 rc.5 真机诊断已确认密钥本身合规，但第二级祖先无 sticky bit、权限 `0777`，与本地拒绝条件一致。rc.6 引入本页描述的应用私有卷修正和程序内密钥初始化；其 CI `41171336131` 被测试脚本挂载权限问题拦下，未上传商店。rc.7 只修正测试脚本暂存路径，不放宽应用检查，保留 rc.6 失败和 tag。
+
+包装源码 `58256406a2bf003fe97248cc2bbc6d1a64b044a0`，固定上游 `server-v0.1.0-rc.4` / `a576aeb5c8adf4bda98c1431bcd6072c642d3660`。Actions `41171750570` completed/success，root 隔离启动门禁、LPK 发布和预览标记全部通过。服务端对应发布 run `41170966158` 也 success，含双架构 Docker 和实际镜像验证。
+
+最终 GitHub 公开 prerelease 的 `community.lazycat.app.cognate-v0.1.0-rc.7.lpk` 为 68,036,096 字节，SHA256 `047ea3a9d71029470a086fd91316eed39f531dbae0399b8b5d7ecdfb114b29c1`。喵喵接受 app `670` / version `3757`，published=true、skipped=false，使用相同 GitHub Release Asset URL 和上述 SHA256；官方商店关闭。升级不改变数据与密钥路径，不迁移已有 key 或数据库。
+
+本地另行构建的 rc.7 LPK 为 68,036,608 字节，SHA256 `205ef24ed2883a5856a038310abffb1b3fcc8fde304016a1a071abf7ea512e93`；其解包二进制与脚本一致性、完整 namespace 回归通过，不把本地字节冒称为 CI 最终资产。真机安装、平台 OIDC 与用户数据升级仍待验证，商店接受不等于已实测成功。
+
+最终 Release Asset 下载探针在 90 秒超时退出（exit 124），只有部分字节，没有完成下载、重新计算最终文件 SHA256 或启动最终 CI LPK。最终身份以 GitHub API digest 与商店回执一致性核对；不要把本地实包和 CI 构建后的启动通过当作最终下载验证。
