@@ -27,3 +27,11 @@ LPK 输出在 `.lazycat-build/`，内容目录为 `dist/content/`，避免把包
 本地构建：安装上述版本后运行 `bash build.sh`，再用 `lzc-cli project build` 或同一 GitHub Action 验证 LPK。目标架构由 `LAZYCAT_TARGET_ARCH` 控制，当前发布配置为 amd64；改为 arm64 时须同步修改 Action 配置并单独验收。
 
 根目录 `npm run build` 是同一构建脚本的便捷入口；根 lockfile 为 reusable workflow 的 Node 工具链缓存提供有效输入，Web 依赖仍由固定上游的真实 lockfile 经 `npm ci` 校验。`v0.1.0-rc.1` 的首轮在 Node 缓存缺少根 lockfile 时失败，未构建 LPK、未发布商店，保留原失败与原 tag，不重写为成功。
+
+## 首包交付记录
+
+`v0.1.0-rc.2` 的 [Actions 41159355144](https://github.com/lazycat-contrib/cognate-lzcapp/actions/runs/41159355144) 构建及喵喵商店提交成功；[LPK 下载](https://github.com/lazycat-contrib/cognate-lzcapp/releases/tag/v0.1.0-rc.2) 为公开 prerelease，大小 67,970,048 字节，SHA256 为 `c1bb1b0eee244a8504bdb22bbc2401b97503e0e76a49430b65832f2f71381b63`。
+
+商店响应接受应用 `670`、版本 `3752`，使用同一 GitHub Release Asset URL 和上述 SHA256；官方商店步骤未启用。此记录不声称商店前台可见或真机部署已通过。后续 rc 包发布后也须核对 GitHub prerelease 标记，不能仅凭数字版本当作正式版。
+
+本地已通过 shell 语法、actionlint、512px 图标检查，以及隔离环境下的主密钥保留、私有权限、secret 文件交接、不进入 argv/进程环境、缺少 OIDC 与符号链接拒绝测试；真实服务端与平台身份交互仍待真机验证。
