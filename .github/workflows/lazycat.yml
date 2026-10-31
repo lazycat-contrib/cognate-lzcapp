@@ -30,3 +30,14 @@ jobs:
       APPSTORE_URL: ${{ secrets.APPSTORE_URL }}
       APPSTORE_TOKEN: ${{ secrets.APPSTORE_TOKEN }}
       PRIVATE_STORE_GROUP_CODES: ${{ secrets.PRIVATE_STORE_GROUP_CODES }}
+  mark-preview:
+    needs: lazycat
+    if: startsWith(github.ref, 'refs/tags/v') && (contains(github.ref_name, '-rc.') || contains(github.ref_name, '-alpha.') || contains(github.ref_name, '-beta.'))
+    runs-on: ubuntu-24.04
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      RELEASE_TAG: ${{ github.ref_name }}
+    steps:
+      - name: Keep preview releases out of latest
+        run: gh release edit "$RELEASE_TAG" --prerelease --latest=false

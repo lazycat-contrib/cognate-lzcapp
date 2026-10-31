@@ -3,7 +3,7 @@
 Cognate 服务端的 LPK v2 Exec 打包仓库，仅发布喵喵商店，官方商店关闭。
 
 - 包名：`community.lazycat.app.cognate`，新应用默认 `community.lazycat.app` 前缀。
-- 当前候选：`0.1.0-rc.4`，最低 lzcos `1.6.2`，目标 Linux amd64。
+- 当前候选：`0.1.0-rc.5`，最低 lzcos `1.6.2`，目标 Linux amd64。
 - 源码：`upstream.env` 固定上游 tag 和完整 commit；不从浮动 main 构建。
 - 构建：Go `1.27.3`、Node `26.12.0`、`CGO_ENABLED=0`，Web 嵌入服务端，不依赖 Docker。
 - 运行：`exec://8080` 仅监听 loopback，数据和密钥持久保存在 `/lzcapp/var/cognate`，不写应用文稿。
@@ -53,3 +53,11 @@ LPK 输出在 `.lazycat-build/`，内容目录为 `dist/content/`，避免把包
 `v0.1.0-rc.3` 的 Actions `41166452977` 在构建前被 SDK 原始 Manifest 解码拒绝：整项 `{{ printf ... }}` 环境模板不能被此预检查当作普通 YAML 字符串。该 run 没有构建 CI LPK，也没有上传 GitHub Release 或商店，保留原 tag，不重写为成功。
 
 rc.4 保留同一服务端源码，仅将安装参数改为受支持的 `KEY={{ .U.parameter | b64enc }}` 普通标量。编码只是安全穿过 YAML，不是加密；密码进入脚本后立即清除原环境变量，直接解码到私有文件，保留换行和特殊字符，不通过 shell 字符串重建密码。使用与失败 CI 一致的 Action v1.3.7 二进制取得旧模板普通 RED、新模板预检查 PASS；没有渲染带虚构参数的 Manifest。正式上传仍由新版本 run 完成，官方商店继续关闭。
+
+## rc.4 发布与设备反馈
+
+Actions `41166888272` 已成功，喵喵接受 app `670` / version `3753`，LPK 68,021,248 字节，SHA256 `3b1ed55b8d1bbe319aef82d2de3e330bdc8fcca4ac89eacebdae75745338f2e8`，与 GitHub Release Asset digest 一致。Release 已明确标为 prerelease，不更新 latest。官方商店关闭。
+
+用户在 2026-10-31T04:06Z 再次报告相同主密钥校验拒绝；本地别名复现的修复没有证明解决用户设备问题。先暂停新功能，rc.5 仅增加启动元数据诊断：effective UID、密钥 mode/UID/GID/硬链接数/字节数及逐级目录元数据，不记录密钥内容或设置值、不放宽校验、不修改平台祖先目录权限。缺失密钥仍自动用系统随机源创建并检查恰好 32 字节，已有密钥绝不覆盖。rc.5 是定位设备差异的诊断候选，不声称根因已确定或真机修复完成。
+
+rc.5 本地真实 LPK 构建、提取 binary/wrapper 一致性及完整启动回归通过。额外构造「key 32 字节/0600 但祖先目录 0777 无 sticky」和「key 硬链接数 2」两种不同原因，均被核心拒绝，诊断能区分且不含密钥内容；不把这两种构造归因于用户设备。新脚本在全新目录自动创建私有 32 字节密钥并取得真实 health 200。预览标签增加成功后的 prerelease/no-latest 自动校正，不依赖每次手动修改 Release。

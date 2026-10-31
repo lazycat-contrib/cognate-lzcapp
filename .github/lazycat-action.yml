@@ -20,7 +20,7 @@ build:
 release:
   use_github_release_notes: false
   store_changelog_format: plain
-  changelog_template: 'Cognate {{.Version}}：修复挂载别名下的密钥路径兼容，新增首次管理员用户名/密码、已有管理员 UUID、OIDC 开关与 GitHub client ID 安装向导；升级保留原密钥、账号和密码。仍为预览版，完整备份恢复和配置自动应用尚未完成。'
+  changelog_template: 'Cognate {{.Version}}：新增不含密钥内容的启动存储诊断，定位懒猫设备上的密钥校验失败；密钥不存在时自动生成，已有密钥不覆盖。保留首次管理员、OIDC 等安装向导。设备故障仍在定位，不声称已修复；完整备份恢复和配置自动应用尚未完成。'
 images: []
 stores:
   official:

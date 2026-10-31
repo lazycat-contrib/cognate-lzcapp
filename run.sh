@@ -50,6 +50,10 @@ if [ ! -e "$key" ]; then
   candidate=$(mktemp "$state/keys/.master.XXXXXXXX")
   trap 'rm -f "$candidate"' 0
   head -c 32 /dev/urandom > "$candidate"
+  if [ "$(wc -c < "$candidate")" -ne 32 ]; then
+    printf 'Cognate master key generation returned an invalid size\n' >&2
+    exit 1
+  fi
   if ! ln "$candidate" "$key"; then
     printf 'Cognate master key creation unconfirmed\n' >&2
     exit 1
@@ -133,4 +137,25 @@ for administrator in ${COGNATE_ADMIN_USER_IDS:-}; do
 done
 IFS=$previous_ifs
 unset COGNATE_ADMIN_USER_IDS
+printf 'Cognate storage diagnostics: effective_uid=%s\n' "$(id -u)" >&2
+if metadata=$(stat -c 'mode=%a uid=%u gid=%g links=%h bytes=%s' "$key" 2>/dev/null); then
+  printf 'Cognate storage diagnostics: master_key %s (content never logged)\n' "$metadata" >&2
+else
+  printf 'Cognate storage diagnostics: master_key metadata unavailable\n' >&2
+fi
+current="$state/keys"
+level=0
+while [ "$level" -lt 64 ]; do
+  if metadata=$(stat -c 'mode=%a uid=%u gid=%g type=%F' "$current" 2>/dev/null); then
+    printf 'Cognate storage diagnostics: directory_level=%s %s\n' "$level" "$metadata" >&2
+  else
+    printf 'Cognate storage diagnostics: directory_level=%s metadata unavailable\n' "$level" >&2
+  fi
+  parent=$(dirname "$current")
+  if [ "$parent" = "$current" ]; then
+    break
+  fi
+  current=$parent
+  level=$((level + 1))
+done
 exec "$@"
