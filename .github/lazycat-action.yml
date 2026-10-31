@@ -1,0 +1,32 @@
+version: 1
+project:
+  root: .
+  build_config: lzc-build.yml
+  package_file: package.yml
+  output: .lazycat-build/cognate.lpk
+  target_arch: amd64
+update:
+  strategy: publish
+  allow_downgrade: false
+  version_source:
+    type: git
+build:
+  toolchains:
+    - kind: go
+      version: 1.27.3
+    - kind: node
+      version: 26.12.0
+  run_buildscript: true
+release:
+  use_github_release_notes: false
+  store_changelog_format: plain
+  changelog_template: 'Cognate {{.Version}}：Exec 服务端预览版，支持技能聚合、公开目录、Pack 与 OIDC；完整备份恢复和配置自动应用尚未完成。'
+images: []
+stores:
+  official:
+    enabled: false
+  private:
+    enabled: true
+    skip_if_version_exists: true
+    name: Cognate
+    summary: Skill 聚合、分发与同步服务（预览版）

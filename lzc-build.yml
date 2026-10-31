@@ -1,0 +1,5 @@
+manifest: ./manifest.yml
+contentdir: ./dist/content
+pkgout: ./.lazycat-build
+icon: ./icon.png
+buildscript: bash ./build.sh

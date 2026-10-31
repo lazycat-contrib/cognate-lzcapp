@@ -1,0 +1,15 @@
+package: community.lazycat.app.cognate
+version: 0.1.0-rc.1
+name: Cognate
+description: Skill 聚合、分发与同步服务
+min_os_version: 1.6.2
+homepage: https://github.com/ca-x/cognate
+author: ca-x
+license: https://choosealicense.com/licenses/mit/
+locales:
+  zh:
+    name: Cognate
+    description: Skill 聚合、分发与同步服务
+  en:
+    name: Cognate
+    description: Skill aggregation, distribution and synchronization server
