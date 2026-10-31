@@ -3,7 +3,7 @@
 Cognate 服务端的 LPK v2 Exec 打包仓库，仅发布喵喵商店，官方商店关闭。
 
 - 包名：`community.lazycat.app.cognate`，新应用默认 `community.lazycat.app` 前缀。
-- 首包：`0.1.0-rc.1`，最低 lzcos `1.6.2`，目标 Linux amd64。
+- 首包候选：`0.1.0-rc.2`，最低 lzcos `1.6.2`，目标 Linux amd64。
 - 源码：`upstream.env` 固定上游 tag 和完整 commit；不从浮动 main 构建。
 - 构建：Go `1.27.3`、Node `26.12.0`、`CGO_ENABLED=0`，Web 嵌入服务端，不依赖 Docker。
 - 运行：`exec://8080` 仅监听 loopback，数据和密钥持久保存在 `/lzcapp/var/cognate`，不写应用文稿。
@@ -25,3 +25,5 @@ LPK 输出在 `.lazycat-build/`，内容目录为 `dist/content/`，避免把包
 仓库或授权的组织 Secrets 必须配置 `APPSTORE_URL`、`APPSTORE_TOKEN`；可选的分组代码放 `PRIVATE_STORE_GROUP_CODES`。不要把任何 Secret 值写进仓库、Issue 或日志。新仓库若使用组织 Selected repositories 策略，管理员须将本仓库加入授权；普通组织成员无法替管理员读取或修改该授权。无需官方商店 token 或镜像复制凭据。
 
 本地构建：安装上述版本后运行 `bash build.sh`，再用 `lzc-cli project build` 或同一 GitHub Action 验证 LPK。目标架构由 `LAZYCAT_TARGET_ARCH` 控制，当前发布配置为 amd64；改为 arm64 时须同步修改 Action 配置并单独验收。
+
+根目录 `npm run build` 是同一构建脚本的便捷入口；根 lockfile 为 reusable workflow 的 Node 工具链缓存提供有效输入，Web 依赖仍由固定上游的真实 lockfile 经 `npm ci` 校验。`v0.1.0-rc.1` 的首轮在 Node 缓存缺少根 lockfile 时失败，未构建 LPK、未发布商店，保留原失败与原 tag，不重写为成功。
