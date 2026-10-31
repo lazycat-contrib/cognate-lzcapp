@@ -5,7 +5,7 @@ description: Skill 聚合、分发与同步服务
 min_os_version: 1.6.2
 homepage: https://github.com/ca-x/cognate
 author: ca-x
-license: https://choosealicense.com/licenses/apache-2.0/
+license: Apache-2.0
 locales:
   zh:
     name: Cognate
