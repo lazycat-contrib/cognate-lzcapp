@@ -3,7 +3,7 @@
 Cognate 服务端的 LPK v2 Exec 打包仓库，仅发布喵喵商店，官方商店关闭。
 
 - 包名：`community.lazycat.app.cognate`，新应用默认 `community.lazycat.app` 前缀。
-- 正式版准备：`0.1.0`，最低 lzcos `1.6.2`，目标 Linux amd64；尚未发布本版 LPK。
+- 当前正式分发：`0.1.0`，最低 lzcos `1.6.2`，目标 Linux amd64；GitHub Release 与喵喵商店已发布。
 - 源码：`upstream.env` 固定上游 tag 和完整 commit；不从浮动 main 构建。
 - 构建：Go `1.27.3`、Node `26.12.0`、`CGO_ENABLED=0`，Web 嵌入服务端，不依赖 Docker。
 - 运行：`exec://8080` 仅监听 loopback，数据和密钥持久保存在 `/lzcapp/var/cognate`，不写应用文稿。
@@ -14,7 +14,7 @@ Cognate 服务端的 LPK v2 Exec 打包仓库，仅发布喵喵商店，官方�
 
 完整备份恢复、全部 agent 配置及 Pack 自动应用、跨平台验收仍待完成；平台 OIDC、手机文件选择器与真机升级仍待验证。用户已反馈 rc.7 安装成功，仅覆盖该版本在该设备的安装，不替代 `0.1.0` 最终资产、平台 OIDC 或用户数据升级验收。
 
-本版构建固定 `server-v0.1.0` / `9d2070a1ae9c51e7e2710ec74970582e1d6c561c`。发布须先通过上游 server release 门禁及本仓库启动与 LPK 检查，并获得发布 go，之后才创建 `v0.1.0`。以下 rc 历史保留原始成功、失败与当时未覆盖项，不作为本版新增验收。
+本版构建固定 `server-v0.1.0` / `9d2070a1ae9c51e7e2710ec74970582e1d6c561c`。发布须先通过上游 server release 门禁及本仓库启动与 LPK 检查，并获得发布 go，之后才创建 `v0.1.0`；本版已完成这些步骤，正式分发回执见页末。以下 rc 历史保留原始成功、失败与当时未覆盖项，不作为本版新增验收。
 
 ## 账号与数据
 
@@ -91,3 +91,17 @@ rc.5 Actions `41167603186` completed/success；喵喵接受 app `670` / version 
 本地另行构建的 rc.7 LPK 为 68,036,608 字节，SHA256 `205ef24ed2883a5856a038310abffb1b3fcc8fde304016a1a071abf7ea512e93`；其解包二进制与脚本一致性、完整 namespace 回归通过，不把本地字节冒称为 CI 最终资产。当时真机安装、平台 OIDC 与用户数据升级仍待验证；现已收到用户 rc.7 安装成功反馈，平台 OIDC 与用户数据升级仍无完整实测结论。
 
 最终 Release Asset 下载探针在 90 秒超时退出（exit 124），只有部分字节，没有完成下载、重新计算最终文件 SHA256 或启动最终 CI LPK。最终身份以 GitHub API digest 与商店回执一致性核对；不要把本地实包和 CI 构建后的启动通过当作最终下载验证。
+
+## 0.1.0 正式分发回执
+
+包装提交 `4c7df600a3425f0281c07094fadd4a7245714a69`，annotated tag `v0.1.0`；上游仍固定上述 `server-v0.1.0` 完整 commit，不跟随后继主线。上游 server release `41276592652` completed/success 后才发布 LPK 标签。
+
+本仓 Actions `41278328477` completed/success：`startup-smoke` job `124764948137` 与 `lazycat / lazycat` job `124765288335` 均成功。喵喵发布步骤成功，官方商店步骤和预览标记 job 按配置跳过；只触发这一次标签发布，没有手动重复上传。
+
+GitHub Release `430390425` 为公开正式版（non-draft、non-prerelease），最终资产 `community.lazycat.app.cognate-v0.1.0.lpk`，77,757,952 字节，SHA256 `5e03f8025575162f1a63b357ed76e43f983a30bce3005f1954ec749478009d91`。喵喵返回 app `670` / version `3838`、published=true、skipped=false，使用同一 Release Asset URL 和 SHA256；官方商店仍关闭。
+
+最终 CI 资产经官方 API 完整分片下载并重新计算整体 size/SHA256，与 Release digest 和商店回执一致。解包确认包名、版本、运行 Manifest、部署参数、原 wrapper、源 commit、许可证及 Linux amd64 / Go1.27.3 / CGO0 / 干净 VCS 元数据；解包后的真实最终二进制通过完整六场景 namespace 启动回归。普通 Release URL 下载低速，仅取得部分字节后停止，不将其称为完整普通 URL 下载验证。
+
+启动测试仅迁移了丢主密钥时的精确 runtime 双行拒绝协议，仍要求非零退出、不重建 key，并新增原 SQLite bytes/device/inode 不变检查。旧断言 RED 保留；build、解包与最终下载内容完整回归通过，任意其他错误、零退出、重建 key、数据库字节或身份变化等负控均被拒绝。没有修改安全 wrapper、参数或服务端源码。
+
+这是已有能力的正式分发，不是全产品完成或全平台 GA。`0.1.0` 真机安装与用户数据升级、平台 OIDC 仍待实际验证，其余范围继续遵守本页分发边界。
