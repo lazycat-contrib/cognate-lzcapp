@@ -20,7 +20,7 @@ build:
 release:
   use_github_release_notes: false
   store_changelog_format: plain
-  changelog_template: 'Cognate {{.Version}}：更新至服务端 0.2.0，增加固定 Gemini profile 的配置授权与 Linux 离线归档校验，修正合法空 WAL 索引的备份检查，补齐 Gemini 许可材料。沿用原管理员密码、主密钥和私有数据目录；完整恢复、全 agent/Pack 自动应用及平台 OIDC、真机升级验收仍待完成。仅喵喵商店分发，官方商店关闭。'
+  changelog_template: 'Cognate {{.Version}}：更新至服务端 0.3.0，新增 Linux 离线单归档修复，可从可信本机备份补回缺失归档或替换损坏归档，并保留损坏原件；中断后可按修复 ID 检查和显式续接。须先停止服务，不自动下载、删除或回收文件，不代表完整备份恢复。沿用原管理员密码、主密钥和私有数据目录；平台 OIDC 与真机升级仍待验证。仅喵喵商店分发，官方商店关闭。'
 images: []
 stores:
   official:

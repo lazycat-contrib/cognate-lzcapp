@@ -3,10 +3,23 @@
 Cognate 服务端的 LPK v2 Exec 打包仓库，仅发布喵喵商店，官方商店关闭。
 
 - 包名：`community.lazycat.app.cognate`，新应用默认 `community.lazycat.app` 前缀。
-- 当前正式分发：`0.2.0`，最低 lzcos `1.6.2`，目标 Linux amd64；GitHub Release 已公开，喵喵商店已接受。
+- 当前正式分发：`0.2.0`；正在准备 `0.3.0`，最低 lzcos `1.6.2`，目标 Linux amd64。
 - 源码：`upstream.env` 固定上游 tag 和完整 commit；不从浮动 main 构建。
 - 构建：Go `1.27.3`、Node `26.12.0`、`CGO_ENABLED=0`，Web 嵌入服务端，不依赖 Docker。
 - 运行：`exec://8080` 仅监听 loopback，数据和密钥持久保存在 `/lzcapp/var/cognate`，不写应用文稿。
+
+## 0.3.0 更新
+
+本次固定 `server-v0.3.0` / `20c7a193a9582cd14cf9d29cbbbdcfbf414e54ec`，
+新增 Linux legacy 数据布局的离线单归档修复。停止服务后，可用可信本机备份补回缺失
+归档或替换损坏归档，损坏原件保留；中断后先校验，再按修复 ID 显式续接。
+命令为 `cognate-server cache repair`，数据目录须显式使用
+`/lzcapp/var/cognate/data`；完整用法及限制见上游 `docs/CACHE-MAINTENANCE.md`。
+不自动下载替代文件，不自动回收，也不代表完整数据库或灾难恢复。
+
+沿用 Exec 启动、首次管理员向导、原密码、主密钥和数据目录，不调整现有安装参数。
+本次不包含尚未验收的 GUI 本机应用、Pack 自动配置或完整恢复，也不重发无代码变更的
+CLI/GUI。仅喵喵商店分发，发布结果以工作流和最终资产核验为准。
 
 ## 0.2.0 正式分发
 
