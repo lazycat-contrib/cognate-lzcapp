@@ -3,7 +3,7 @@
 Cognate 服务端的 LPK v2 Exec 打包仓库，仅发布喵喵商店，官方商店关闭。
 
 - 包名：`community.lazycat.app.cognate`，新应用默认 `community.lazycat.app` 前缀。
-- 当前正式分发：`0.2.0`；正在准备 `0.3.0`，最低 lzcos `1.6.2`，目标 Linux amd64。
+- 当前正式分发：`0.3.0`，最低 lzcos `1.6.2`，目标 Linux amd64；GitHub Release 已公开，喵喵商店已接受，店面切换待确认。
 - 源码：`upstream.env` 固定上游 tag 和完整 commit；不从浮动 main 构建。
 - 构建：Go `1.27.3`、Node `26.12.0`、`CGO_ENABLED=0`，Web 嵌入服务端，不依赖 Docker。
 - 运行：`exec://8080` 仅监听 loopback，数据和密钥持久保存在 `/lzcapp/var/cognate`，不写应用文稿。
@@ -19,7 +19,14 @@ Cognate 服务端的 LPK v2 Exec 打包仓库，仅发布喵喵商店，官方�
 
 沿用 Exec 启动、首次管理员向导、原密码、主密钥和数据目录，不调整现有安装参数。
 本次不包含尚未验收的 GUI 本机应用、Pack 自动配置或完整恢复，也不重发无代码变更的
-CLI/GUI。仅喵喵商店分发，发布结果以工作流和最终资产核验为准。
+CLI/GUI。仅喵喵商店分发，官方商店关闭。
+
+发布工作流 `41304471910` success，公开 Release `430556181` 非 prerelease；最终
+LPK `community.lazycat.app.cognate-v0.3.0.lpk` 大小 `78537728` 字节，完整下载 SHA256：
+`2ca687ca2d1eb451955cbc17572560734cc268f9a4516d6a5c40ad6a9206d5c9`。
+包内容、许可、准确源码与 Go metadata 已核对，最终 ELF 再次通过六场景隔离启动与
+合成归档修复/原件保留检查。喵喵回执 `published=true`、`appId=670`、`versionId=3880`，
+`onlineVersion=0.2.0`；店面切换、平台 OIDC 和真机升级数据保留尚未确认。
 
 ## 0.2.0 正式分发
 
