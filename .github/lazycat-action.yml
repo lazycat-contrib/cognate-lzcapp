@@ -20,7 +20,7 @@ build:
 release:
   use_github_release_notes: false
   store_changelog_format: plain
-  changelog_template: 'Cognate {{.Version}}：适配 root 运行的应用私有持久卷，仅收紧 /lzcapp/var 权限，解决已复现的 0777 祖先目录启动拒绝。显式传递数据和密钥路径，由服务端为新实例生成密钥，已有密钥与管理员密码不覆盖，已有数据丢密钥拒绝重建。新增隔离启动及升级门禁；真机安装仍待验证。完整备份恢复和配置自动应用尚未完成。'
+  changelog_template: 'Cognate {{.Version}} 正式分发：提供内嵌 Web 的 Skill 聚合、分发与同步服务，保留本地账号、显式 OIDC 绑定和应用私有持久卷，沿用已有管理员密码与主密钥。正式分发已有能力不等于全产品完成；完整备份恢复、全 agent/Pack 自动应用及跨平台验收仍待完成，平台 OIDC 与真机升级仍待验证。仅喵喵商店分发，官方商店关闭。'
 images: []
 stores:
   official:
@@ -29,4 +29,4 @@ stores:
     enabled: true
     skip_if_version_exists: true
     name: Cognate
-    summary: Skill 聚合、分发与同步服务（预览版）
+    summary: Skill 聚合、分发与同步服务

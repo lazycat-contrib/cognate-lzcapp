@@ -3,6 +3,7 @@ import base64
 import json
 import os
 from pathlib import Path
+import re
 import secrets
 import shutil
 import signal
@@ -90,6 +91,22 @@ def run_healthy(settings, original_password):
         assert KEY.read_bytes() not in output, 'master key leaked'
 
 
+def assert_lost_key_refusal(failed, database, original_database):
+    assert failed.returncode != 0, 'lost key for existing data was accepted'
+    diagnostics = re.compile(
+        rb'Cognate storage diagnostics: (?:effective_uid=[0-9]+|master_key metadata unavailable|'
+        rb'directory_level=[0-9]+ mode=[0-7]+ uid=[0-9]+ gid=[0-9]+ type=directory)\n')
+    refusal = failed.stderr
+    while diagnostic := diagnostics.match(refusal):
+        refusal = refusal[diagnostic.end():]
+    assert refusal == (b'runtime lease: needs attention\n'
+                       b'runtime lease: release or persistence uncertain\n'), 'unexpected lost-key refusal protocol'
+    assert not KEY.exists(), 'lost key for existing data was regenerated'
+    metadata = database.stat()
+    assert (metadata.st_dev, metadata.st_ino, database.read_bytes()) == original_database, \
+        'lost-key refusal changed SQLite bytes or identity'
+
+
 def inside(scenario):
     assert os.geteuid() == 0, 'test requires namespace root'
     password = secrets.token_urlsafe(32) + '\n\'"#:$\\\n'
@@ -154,10 +171,12 @@ def inside(scenario):
         assert KEY.read_bytes() == original, 'unsafe existing key was replaced'
         if mode == 0o600:
             extra.unlink()
+    database = STATE / 'data/server.db'
+    database_metadata = database.stat()
+    original_database = (database_metadata.st_dev, database_metadata.st_ino, database.read_bytes())
     KEY.unlink()
     failed = subprocess.run(['sh', WRAPPER], env=settings, capture_output=True, timeout=15)
-    assert failed.returncode != 0 and b'restore the original key' in failed.stderr
-    assert not KEY.exists(), 'lost key for existing data was regenerated'
+    assert_lost_key_refusal(failed, database, original_database)
     print('PASS:', scenario, 'health, explicit paths, original admin/key, restart, unsafe/lost-key refusal')
 
 

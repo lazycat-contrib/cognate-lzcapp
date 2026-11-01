@@ -3,10 +3,18 @@
 Cognate 服务端的 LPK v2 Exec 打包仓库，仅发布喵喵商店，官方商店关闭。
 
 - 包名：`community.lazycat.app.cognate`，新应用默认 `community.lazycat.app` 前缀。
-- 当前候选：`0.1.0-rc.7`，最低 lzcos `1.6.2`，目标 Linux amd64。
+- 正式版准备：`0.1.0`，最低 lzcos `1.6.2`，目标 Linux amd64；尚未发布本版 LPK。
 - 源码：`upstream.env` 固定上游 tag 和完整 commit；不从浮动 main 构建。
 - 构建：Go `1.27.3`、Node `26.12.0`、`CGO_ENABLED=0`，Web 嵌入服务端，不依赖 Docker。
 - 运行：`exec://8080` 仅监听 loopback，数据和密钥持久保存在 `/lzcapp/var/cognate`，不写应用文稿。
+
+## 0.1.0 分发边界
+
+本版正式分发已有的 Skill 聚合、分发与同步服务，包含内嵌 Web、本地账号、显式 OIDC 绑定及应用私有数据与密钥保护；不包含 CLI 或桌面 GUI。正式分发已有能力不等于全产品完成，也不代表全平台 GA。
+
+完整备份恢复、全部 agent 配置及 Pack 自动应用、跨平台验收仍待完成；平台 OIDC、手机文件选择器与真机升级仍待验证。用户已反馈 rc.7 安装成功，仅覆盖该版本在该设备的安装，不替代 `0.1.0` 最终资产、平台 OIDC 或用户数据升级验收。
+
+本版构建固定 `server-v0.1.0` / `9d2070a1ae9c51e7e2710ec74970582e1d6c561c`。发布须先通过上游 server release 门禁及本仓库启动与 LPK 检查，并获得发布 go，之后才创建 `v0.1.0`。以下 rc 历史保留原始成功、失败与当时未覆盖项，不作为本版新增验收。
 
 ## 账号与数据
 
@@ -24,7 +32,7 @@ Cognate 服务端的 LPK v2 Exec 打包仓库，仅发布喵喵商店，官方�
 
 本地使用独立 user/mount/network namespace，以 UID 0 和 `0777` 的 `/lzcapp/var` 复现旧拒绝；修正后的实际二进制及原始包装脚本 health 200，显式目录参数、初始管理员授权、升级后原密码和密钥、重新放宽卷权限后的重启均通过。符号链接/只读卷、自定义外部不可信祖先、公开权限/多硬链接密钥和已有数据库丢密钥均拒绝。隔离环境验证不等于懒猫真机安装或平台 OIDC 验收。
 
-当前是服务端预览包，不包含 CLI 或桌面 GUI。完整云备份/恢复、全部 agent 配置应用与 Pack 自动应用未完成，见[上游 TODO](https://github.com/ca-x/cognate/blob/2bb9b137e124a89833d3c66f1c59018d7e8e44c5/docs/TODO.md)。懒猫真机部署、平台 OIDC 和手机文件选择器仍须实测，不将构建成功称作真机验收或官方商店合规。
+完整功能与剩余范围见[本版上游 TODO](https://github.com/ca-x/cognate/blob/9d2070a1ae9c51e7e2710ec74970582e1d6c561c/docs/TODO.md)。不将构建成功、商店接受或 rc.7 安装反馈称作本版真机升级验收或官方商店合规。
 
 ## 自动构建与发布
 
@@ -80,6 +88,6 @@ rc.5 Actions `41167603186` completed/success；喵喵接受 app `670` / version 
 
 最终 GitHub 公开 prerelease 的 `community.lazycat.app.cognate-v0.1.0-rc.7.lpk` 为 68,036,096 字节，SHA256 `047ea3a9d71029470a086fd91316eed39f531dbae0399b8b5d7ecdfb114b29c1`。喵喵接受 app `670` / version `3757`，published=true、skipped=false，使用相同 GitHub Release Asset URL 和上述 SHA256；官方商店关闭。升级不改变数据与密钥路径，不迁移已有 key 或数据库。
 
-本地另行构建的 rc.7 LPK 为 68,036,608 字节，SHA256 `205ef24ed2883a5856a038310abffb1b3fcc8fde304016a1a071abf7ea512e93`；其解包二进制与脚本一致性、完整 namespace 回归通过，不把本地字节冒称为 CI 最终资产。真机安装、平台 OIDC 与用户数据升级仍待验证，商店接受不等于已实测成功。
+本地另行构建的 rc.7 LPK 为 68,036,608 字节，SHA256 `205ef24ed2883a5856a038310abffb1b3fcc8fde304016a1a071abf7ea512e93`；其解包二进制与脚本一致性、完整 namespace 回归通过，不把本地字节冒称为 CI 最终资产。当时真机安装、平台 OIDC 与用户数据升级仍待验证；现已收到用户 rc.7 安装成功反馈，平台 OIDC 与用户数据升级仍无完整实测结论。
 
 最终 Release Asset 下载探针在 90 秒超时退出（exit 124），只有部分字节，没有完成下载、重新计算最终文件 SHA256 或启动最终 CI LPK。最终身份以 GitHub API digest 与商店回执一致性核对；不要把本地实包和 CI 构建后的启动通过当作最终下载验证。
