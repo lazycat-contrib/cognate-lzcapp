@@ -3,20 +3,20 @@
 Cognate 服务端的 LPK v2 Exec 打包仓库，仅发布喵喵商店，官方商店关闭。
 
 - 包名：`community.lazycat.app.cognate`，新应用默认 `community.lazycat.app` 前缀。
-- 当前正式分发：`0.1.0`，最低 lzcos `1.6.2`，目标 Linux amd64；GitHub Release 与喵喵商店已发布。
+- 当前正式分发：`0.2.0`，最低 lzcos `1.6.2`，目标 Linux amd64；GitHub Release 已公开，喵喵商店已接受。
 - 源码：`upstream.env` 固定上游 tag 和完整 commit；不从浮动 main 构建。
 - 构建：Go `1.27.3`、Node `26.12.0`、`CGO_ENABLED=0`，Web 嵌入服务端，不依赖 Docker。
 - 运行：`exec://8080` 仅监听 loopback，数据和密钥持久保存在 `/lzcapp/var/cognate`，不写应用文稿。
 
-## 0.2.0 发布准备
+## 0.2.0 正式分发
 
 本次固定 `server-v0.2.0` / `71afc524d35efeb3253160dce41a26d12a3c9a4b`，
 增加固定 Gemini profile 的服务端配置授权、Linux 离线归档校验及合法空 WAL 索引的
 备份检查修正。LPK 新增 Gemini 原版 LICENSE 和完整第三方声明，保留 Codex 许可。
 不包含 GUI、CLI 安装包，也不包含仍在开发的完整恢复、Pack 自动配置或 MyGo 本机应用。
 
-`v0.2.0` 需等待上游服务端发布门、固定源码构建、隔离启动及实际 LPK 内容核验通过后
-才发布；本段不预先宣称商店交付成功。原管理员密码、主密钥和私有数据路径保持不变。
+`v0.2.0` 在上游服务端发布门、固定源码构建、隔离启动及实际 LPK 内容核验通过后发布，
+最终发布资产与喵喵回执见页末。原管理员密码、主密钥和私有数据路径保持不变。
 平台 OIDC 和真机升级数据保留仍需用户测试。以下旧版回执保持原有范围。
 
 ## 0.1.0 分发边界
@@ -116,3 +116,25 @@ GitHub Release `430390425` 为公开正式版（non-draft、non-prerelease），
 启动测试仅迁移了丢主密钥时的精确 runtime 双行拒绝协议，仍要求非零退出、不重建 key，并新增原 SQLite bytes/device/inode 不变检查。旧断言 RED 保留；build、解包与最终下载内容完整回归通过，任意其他错误、零退出、重建 key、数据库字节或身份变化等负控均被拒绝。没有修改安全 wrapper、参数或服务端源码。
 
 这是已有能力的正式分发，不是全产品完成或全平台 GA。`0.1.0` 真机安装与用户数据升级、平台 OIDC 仍待实际验证，其余范围继续遵守本页分发边界。
+
+## 0.2.0 正式分发回执
+
+包装 tag 固定 `0cf739c32e972f04678e5785336682634b49f989`，上游固定
+`server-v0.2.0` / `71afc524d35efeb3253160dce41a26d12a3c9a4b`。上游 server release
+`41293226218` success 后推送本仓库 `v0.2.0`；LazyCat workflow `41294390302` success，
+root 启动门与 LPK 发布通过，官方商店关闭。
+
+公开正式 Release `430487306` 的最终资产 `community.lazycat.app.cognate-v0.2.0.lpk`
+为 78,483,968 字节，SHA256 `2a2d354837c2bb1f441b5a9d21923c68f1de4091fff3a64e03782296c3911ec4`。
+喵喵接受 app `670` / version `3851`，published=true、skipped=false，准确 GitHub Asset URL
+与 SHA256 一致。没有重发、替换既有资产或移动标签。
+
+最终 CI 资产经官方 API 完整下载及整体 hash 校验，再解包核对 metadata、权限、原 wrapper、
+七份 content、源提交和 Go/CGO0/目标身份。Codex 与 Gemini 两份许可均逐字核对；最终 binary
+与本地固定源码构建逐字一致，SHA256 `f7458fdc9539d65536a2687e1efbbba95f54ebc5684237e45bb842e56de65902`。
+对最终下载解包内容运行完整 namespace 启动 suite，通过首次启动、升级、原管理员/密钥保留、
+丢失或不安全密钥拒绝、卷链接与祖先权限等检查，不以 staging 或商店接受代替这些检查。
+
+本地初次打包因私有副本缺输出目录失败，创建受控目录后通过，原日志保留。宿主无免密 sudo，
+本地完整测试以 unprivileged user namespace 中的 UID0 执行；CI 另有真实 runner root 门。
+用户盒子的真机升级数据保留、平台 OIDC 和手机文件选择器仍待测试。商店接受不代表店面可见性。
