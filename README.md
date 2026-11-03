@@ -3,7 +3,7 @@
 Cognate 服务端的 LPK v2 Exec 打包仓库，仅发布喵喵商店，官方商店关闭。
 
 - 包名：`community.lazycat.app.cognate`，新应用默认 `community.lazycat.app` 前缀。
-- 本次发布目标：`0.4.0`，最低 lzcos `1.6.2`，目标 Linux amd64；最终发布回执待验证，上一正式分发为 `0.3.0`。
+- 当前正式分发：`0.4.0`，最低 lzcos `1.6.2`，目标 Linux amd64；GitHub Release 已公开、喵喵接受，回执 onlineVersion 仍 `0.3.0`，店面切换待确认。
 - 源码：`upstream.env` 固定上游 tag 和完整 commit；不从浮动 main 构建。
 - 构建：Go `1.27.3`、Node `26.12.0`、`CGO_ENABLED=0`，Web 嵌入服务端，不依赖 Docker。
 - 运行：`exec://8080` 仅监听 loopback，数据和密钥持久保存在 `/lzcapp/var/cognate`，不写应用文稿。
@@ -18,7 +18,18 @@ Cognate 服务端的 LPK v2 Exec 打包仓库，仅发布喵喵商店，官方�
 
 沿用原 Exec 启动、管理员、密码、主密钥和 `/lzcapp/var/cognate` 数据目录。
 不重发 CLI/GUI，不包含完整备份恢复；平台 OIDC、店面切换与真机升级须另行确认。
-仅喵喵商店，官方关闭。待上游发布门禁通过后创建不可变 `v0.4.0`。
+仅喵喵商店，官方关闭。上游 release `41679165153` success 后创建不可变 `v0.4.0`，
+固定包装 `8720054f99a79b41d9737170fa51e765cf092ec6`，没有移动旧 tag。
+
+发布 workflow `41681049194` success，公开正式 Release `432994285` 非 prerelease。
+最终 `community.lazycat.app.cognate-v0.4.0.lpk` 为 78,648,320 字节，完整下载 SHA256：
+`204c29043268236d3219ad3946e152d2571d460b0af3b27f086475dde4c4b41d`。
+白名单、权限、原 wrapper、Codex/Gemini 许可及 SOURCE_COMMIT/Go/CGO0 metadata 已核对；
+最终 ELF 与本地固定源码构建逐字相同（SHA256
+`6be1cd55d6fc48d8d053940d01585a214da446c67084508349614f63f972c443`），
+再次通过六场景隔离启动、原账号与主密钥保留及不安全/丢失密钥拒绝检查。
+喵喵回执 `published=true`、`skipped=false`、app `670`、version `4074`，
+准确资产 URL 和 SHA256 一致；`onlineVersion=0.3.0`，不代表店面已切换到 0.4.0。
 
 ## 0.3.0 更新
 
