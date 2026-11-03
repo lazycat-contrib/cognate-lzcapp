@@ -20,7 +20,7 @@ build:
 release:
   use_github_release_notes: false
   store_changelog_format: plain
-  changelog_template: 'Cognate {{.Version}}：更新至服务端 0.3.0，新增 Linux 离线单归档修复，可从可信本机备份补回缺失归档或替换损坏归档，并保留损坏原件；中断后可按修复 ID 检查和显式续接。须先停止服务，不自动下载、删除或回收文件，不代表完整备份恢复。沿用原管理员密码、主密钥和私有数据目录；平台 OIDC 与真机升级仍待验证。仅喵喵商店分发，官方商店关闭。'
+  changelog_template: 'Cognate {{.Version}}：密码登录后使用 OIDC 默认关联当前账号，支持密码确认取消关联并退出其它会话，不自动合并历史账号。Web 支持 Magpie 界面密码加密导出，密码仅在浏览器解密，仅迁移技能来源，不恢复打包文件或全部配置。cc-switch Web 快照支持 schema23/24 与 64 MiB。沿用原管理员、密码、主密钥和数据目录；平台 OIDC 与真机升级待验证。仅喵喵商店分发，官方关闭。'
 images: []
 stores:
   official:

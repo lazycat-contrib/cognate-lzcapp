@@ -3,10 +3,22 @@
 Cognate 服务端的 LPK v2 Exec 打包仓库，仅发布喵喵商店，官方商店关闭。
 
 - 包名：`community.lazycat.app.cognate`，新应用默认 `community.lazycat.app` 前缀。
-- 当前正式分发：`0.3.0`，最低 lzcos `1.6.2`，目标 Linux amd64；GitHub Release 已公开，喵喵商店已接受，店面切换待确认。
+- 本次发布目标：`0.4.0`，最低 lzcos `1.6.2`，目标 Linux amd64；最终发布回执待验证，上一正式分发为 `0.3.0`。
 - 源码：`upstream.env` 固定上游 tag 和完整 commit；不从浮动 main 构建。
 - 构建：Go `1.27.3`、Node `26.12.0`、`CGO_ENABLED=0`，Web 嵌入服务端，不依赖 Docker。
 - 运行：`exec://8080` 仅监听 loopback，数据和密钥持久保存在 `/lzcapp/var/cognate`，不写应用文稿。
+
+## 0.4.0 更新
+
+固定 `server-v0.4.0` / `bb81f39b77c9776e42fba34566095c772cd2623a`：
+
+- 密码登录后启动 OIDC 默认关联当前账号；账号页用本地密码确认取消关联，保留当前会话、撤销其它会话。历史独立账号不自动合并，OIDC-only 账号不能移除唯一登录方式。
+- Web 支持 Magpie 界面生成的密码加密 `.magpie-backup`（64 MiB）；需要 HTTPS 或 localhost，由浏览器解密，仅迁移技能来源，不上传密码或恢复打包文件、无关凭据和全部配置。仍兼容 `library.json`（1 MiB）。
+- cc-switch Web 快照支持 schema23/24、64 MiB；整库上传需要明确授权及一致快照。用户本机真实库只作只读内存预览验证，不包含在代码或 LPK。
+
+沿用原 Exec 启动、管理员、密码、主密钥和 `/lzcapp/var/cognate` 数据目录。
+不重发 CLI/GUI，不包含完整备份恢复；平台 OIDC、店面切换与真机升级须另行确认。
+仅喵喵商店，官方关闭。待上游发布门禁通过后创建不可变 `v0.4.0`。
 
 ## 0.3.0 更新
 
