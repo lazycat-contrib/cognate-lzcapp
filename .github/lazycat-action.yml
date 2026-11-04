@@ -20,7 +20,7 @@ build:
 release:
   use_github_release_notes: false
   store_changelog_format: plain
-  changelog_template: 'Cognate {{.Version}}：密码登录后使用 OIDC 默认关联当前账号，支持密码确认取消关联并退出其它会话，不自动合并历史账号。Web 支持 Magpie 界面密码加密导出，密码仅在浏览器解密，仅迁移技能来源，不恢复打包文件或全部配置。cc-switch Web 快照支持 schema23/24 与 64 MiB。沿用原管理员、密码、主密钥和数据目录；平台 OIDC 与真机升级待验证。仅喵喵商店分发，官方关闭。'
+  changelog_template: 'Cognate {{.Version}}：优化 Web 工作空间、导航与切页反馈；仓库列表优先展示，添加弹层保留草稿，Magpie/cc-switch/npx 导入按需展开；AI 配置支持 Agent/名称筛选。沿用 0.4.0 的 OIDC 关联、加密导出与数据库兼容，不修改设备配置。升级保留原管理员、密码、主密钥和数据目录；真机升级待验证。仅喵喵商店，官方关闭。'
 images: []
 stores:
   official:
