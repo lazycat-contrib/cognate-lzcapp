@@ -3,18 +3,33 @@
 Cognate 服务端的 LPK v2 Exec 打包仓库，仅发布喵喵商店，官方商店关闭。
 
 - 包名：`community.lazycat.app.cognate`，新应用默认 `community.lazycat.app` 前缀。
-- 当前正式分发：`0.4.0`，最低 lzcos `1.6.2`，目标 Linux amd64；GitHub Release 已公开、喵喵接受，回执 onlineVersion 仍 `0.3.0`，店面切换待确认。
+- 当前正式分发：`0.5.0`，最低 lzcos `1.6.2`，目标 Linux amd64；GitHub Release 已公开、喵喵接受，回执 onlineVersion 仍 `0.4.0`，店面切换待确认。
 - 源码：`upstream.env` 固定上游 tag 和完整 commit；不从浮动 main 构建。
 - 构建：Go `1.27.3`、Node `26.12.0`、`CGO_ENABLED=0`，Web 嵌入服务端，不依赖 Docker。
 - 运行：`exec://8080` 仅监听 loopback，数据和密钥持久保存在 `/lzcapp/var/cognate`，不写应用文稿。
 
-## 0.5.0 候选
+## 0.5.0 更新
 
 固定 `server-v0.5.0` / `66c8d76215f8696180a992e5cb5a1f0f5c7eb3b8`：
 Web 仓库浏览优先、添加弹层、导入渐进展开、Agent/名称筛选、导航分组和模块预热。
 复用成熟组件，不更换数据库、RPC 或原生 GUI；默认私有和显式发布确认不变。
 沿用原账号、密码、主密钥及数据目录；升级前备份，勿重新初始化。
-本轮最终 Docker、LPK 与喵喵回执仍待核验，不能将候选当作已发布。
+上游 Server release `41814175849` success、源码 Build `41814073679` success。
+Docker index `sha256:f03d0e4503fa71c93cdcb67b6130793c27ebbe643a731cf1765175e60342b917`
+已匿名读取校验；Linux amd64/arm64 最终镜像均通过执行检查，不更新 latest。
+
+不可变 `v0.5.0` 包装 commit `c712b3a48f0d9e69754519349ac7c2a4b002ef3c`，
+LazyCat run `41815749938` success；公开正式 Release `433794212` 非 draft/prerelease。
+资产 `community.lazycat.app.cognate-v0.5.0.lpk`，API 元数据大小 78,657,024 字节，SHA256：
+`4e8914fccf12d008c575e3e45c6ac39263f850f2d5eb8f90c67982849ea05ea0`。
+最终包完整下载的大小与整体 SHA256 匹配；外层五项、content 七项白名单、权限/属主、所有许可、
+原 wrapper、SOURCE_COMMIT 和 Go/CGO0/Linux amd64/clean VCS metadata 均通过。
+最终 ELF 与本地固定源码构建逐字一致，SHA256 为
+`bdff551dad3a0963bf176372bfaac11535df4b180fa188ed8f40d84f249e3a57`。
+对最终下载载荷再次运行完整隔离 root 启动 suite，首次管理员、升级保留原账号和主密钥、
+不安全/丢失密钥拒绝、卷链接、只读卷及祖先权限边界通过；不以 staging 或商店接受替代这些检查。
+喵喵接受 app 670 / version 4128，published=true、skipped=false，准确资产与 SHA256 一致；
+回执 onlineVersion=0.4.0，不等于店面已切到 0.5.0。官方商店关闭，真机升级待用户测试。
 
 ## 0.4.0 更新
 
