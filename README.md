@@ -6,6 +6,20 @@ Cognate 服务端的 LPK v2 Exec 打包仓库，仅发布喵喵商店，官方�
 - 当前正式分发：`0.6.1`，最低 lzcos `1.6.2`，目标 Linux amd64；GitHub Release 已公开，喵喵接受 version `4261`，回执 onlineVersion 仍 `0.6.0`，店面切换待确认。
 - 源码：`upstream.env` 固定上游 tag 和完整 commit；不从浮动 main 构建。
 
+## 0.6.2：动效与交互细节维护
+
+发布准备中，固定 `server-v0.6.2` / `643394746424f792a84724323b55cc8706a40ee7`。
+登录与公开目录按需使用 React Bits 局部追光和一次性渐入；保留主题、多语言、键盘、
+触摸/笔降级与 reduced-motion，不引入持续动画或新的运行时依赖。
+导入和仓库搜索可清空并保留焦点，筛选与选择计数更明确；备份草稿重新读取前确认，
+取消旧读取，跨 revision 恢复焦点，保存后直接采用确认响应，仍在线生效。
+
+React Bits 是 MIT + Commons Clause，并非无条件 MIT；完整原文随嵌入 Web 提供于
+`/assets/react-bits-LICENSE.txt`，LPK 另附 `REACT-BITS-LICENSE.txt`。
+构建固定许可哈希，隔离启动测试实际请求匿名资源并核对完整字节。
+原 Exec、管理员/OIDC 向导、数据路径、主密钥和备份安全门禁不变；官方商店关闭。
+此段不是已发布、店面切换或真机升级验收的证据，最终结果发布后补录。
+
 ## 0.6.1：在线备份设置与导入修复
 
 固定 `upstream.env` 中的不可变 `server-v0.6.1` 与完整源码提交；原 Exec、首次管理员、

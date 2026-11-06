@@ -1,5 +1,6 @@
 import argparse
 import base64
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -61,6 +62,12 @@ def run_healthy(settings, original_password):
                     pass
                 time.sleep(.05)
             assert ready, 'packaged wrapper failed to reach health 200'
+            with urllib.request.urlopen('http://127.0.0.1:8080/assets/react-bits-LICENSE.txt', timeout=5) as response:
+                license_bytes = response.read(2061)
+                assert response.status == 200 and len(license_bytes) == 2060, 'complete React Bits license unavailable'
+                assert hashlib.sha256(license_bytes).hexdigest() == \
+                    '4bdd1fa59a6b7d5954bc3b213dbc34e455c635a94bbcecf9293553797d0fad02', \
+                    'packaged React Bits license differs from pinned upstream'
             status, login = request('/skillhub.auth.v1.AuthService/Login',
                                     {'username': 'initial-admin', 'password': original_password})
             assert status == 200 and login.get('sessionToken'), 'original administrator login failed'
