@@ -5,6 +5,16 @@ Cognate 服务端的 LPK v2 Exec 打包仓库，仅发布喵喵商店，官方�
 - 包名：`community.lazycat.app.cognate`，新应用默认 `community.lazycat.app` 前缀。
 - 当前正式分发：`0.5.0`，最低 lzcos `1.6.2`，目标 Linux amd64；GitHub Release 已公开、喵喵接受，回执 onlineVersion 仍 `0.4.0`，店面切换待确认。
 - 源码：`upstream.env` 固定上游 tag 和完整 commit；不从浮动 main 构建。
+
+## 0.6.0：OpenCode 选择导入
+
+固定 `server-v0.6.0` / `bece83eb7ae7ed398a294d9208165e04071c83ca`，仅更新包版本、
+上游 pin 与说明；原 Exec、私有数据卷、首次管理员和 OIDC 向导保持。
+新增 cc-switch schema23/24 的受控 OpenCode v1 配置导入和完整字段审阅，来源密钥及
+header 原值不迁移，不修改设备配置。v2、扩展字段与全部配置自动应用仍未完成。
+含 OpenCode READY 候选的快照须配套 CLI 0.3.0 / MyGo 0.1.4，旧客户端严格解码器
+会拒绝整个预览；Web 随包更新。保持喵喵商店单独发布，官方商店关闭。
+上游发布门禁和最终 LPK 回执必须另行核对，本段不是已上架或真机升级成功的证明。
 - 构建：Go `1.27.3`、Node `26.12.0`、`CGO_ENABLED=0`，Web 嵌入服务端，不依赖 Docker。
 - 运行：`exec://8080` 仅监听 loopback，数据和密钥持久保存在 `/lzcapp/var/cognate`，不写应用文稿。
 
