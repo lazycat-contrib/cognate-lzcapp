@@ -3,12 +3,12 @@
 Cognate 服务端的 LPK v2 Exec 打包仓库，仅发布喵喵商店，官方商店关闭。
 
 - 包名：`community.lazycat.app.cognate`，新应用默认 `community.lazycat.app` 前缀。
-- 当前正式分发：`0.6.1`，最低 lzcos `1.6.2`，目标 Linux amd64；GitHub Release 已公开，喵喵接受 version `4261`，回执 onlineVersion 仍 `0.6.0`，店面切换待确认。
+- 当前正式分发：`0.6.2`，最低 lzcos `1.6.2`，目标 Linux amd64；GitHub Release 已公开，喵喵接受 version `4295`，回执 onlineVersion 仍 `0.6.1`，店面切换待确认。
 - 源码：`upstream.env` 固定上游 tag 和完整 commit；不从浮动 main 构建。
 
 ## 0.6.2：动效与交互细节维护
 
-发布准备中，固定 `server-v0.6.2` / `643394746424f792a84724323b55cc8706a40ee7`。
+已发布，固定 `server-v0.6.2` / `643394746424f792a84724323b55cc8706a40ee7`。
 登录与公开目录按需使用 React Bits 局部追光和一次性渐入；保留主题、多语言、键盘、
 触摸/笔降级与 reduced-motion，不引入持续动画或新的运行时依赖。
 导入和仓库搜索可清空并保留焦点，筛选与选择计数更明确；备份草稿重新读取前确认，
@@ -18,7 +18,20 @@ React Bits 是 MIT + Commons Clause，并非无条件 MIT；完整原文随嵌�
 `/assets/react-bits-LICENSE.txt`，LPK 另附 `REACT-BITS-LICENSE.txt`。
 构建固定许可哈希，隔离启动测试实际请求匿名资源并核对完整字节。
 原 Exec、管理员/OIDC 向导、数据路径、主密钥和备份安全门禁不变；官方商店关闭。
-此段不是已发布、店面切换或真机升级验收的证据，最终结果发布后补录。
+
+不可变 `v0.6.2` 固定包装 `664e2d2b32db9976026d2a92b6f16530ea210476`。
+上游 Build `42240548849`、Server release `42243330417` 与 Platform `42243330335`
+成功。包装 run `42246065093` attempt 1 在 apt 镜像请求中停滞，取消后确认发布 job
+skipped，保留日志；同源码只重跑一次，attempt 2 全部成功，未移动 tag 或放宽测试。
+
+最终 `community.lazycat.app.cognate-v0.6.2.lpk` 匿名完整下载 **78,898,688 字节**，
+SHA256 `e1363b85e71c05d7f2e70064acfedde19a27eceb936834f6c523dab3caa82403`，
+与 GitHub API 及喵喵回执一致。外层五项、content 八项白名单、root 属主/权限、全部
+许可、资源与 clean CGO0 metadata 均通过，ELF 与固定源码本机构建逐字相同，SHA256
+`95bc90221457d8fae4f2db85e249a70c2136d8af424bbfb66f1a36a1c6df8917`。
+最终 binary/wrapper 完整隔离 root 首装/升级与权限拒绝 suite 通过，包含匿名许可请求。
+喵喵接受 app670/version4295，published=true、skipped=false；回执 onlineVersion
+仍 0.6.1，不表示店面已经切换。官方关闭，盒子真机升级和平台 OIDC 仍待单独验证。
 
 ## 0.6.1：在线备份设置与导入修复
 
