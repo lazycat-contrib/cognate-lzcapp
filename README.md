@@ -3,7 +3,7 @@
 Cognate 服务端的 LPK v2 Exec 打包仓库，仅发布喵喵商店，官方商店关闭。
 
 - 包名：`community.lazycat.app.cognate`，新应用默认 `community.lazycat.app` 前缀。
-- 维护版本：`0.6.1`，最低 lzcos `1.6.2`，目标 Linux amd64；最终发布与商店回执另行核对。
+- 当前正式分发：`0.6.1`，最低 lzcos `1.6.2`，目标 Linux amd64；GitHub Release 已公开，喵喵接受 version `4261`，回执 onlineVersion 仍 `0.6.0`，店面切换待确认。
 - 源码：`upstream.env` 固定上游 tag 和完整 commit；不从浮动 main 构建。
 
 ## 0.6.1：在线备份设置与导入修复
@@ -18,6 +18,12 @@ OIDC 向导、主密钥与私有数据目录保持。导入候选按来源与客
 页面填写服务器绝对路径，不上传或生成密钥；完整恢复未交付。
 Linux 同一数据目录仅允许一个服务端，备份关闭也一样；不同目录可分别运行。
 懒猫原有 `multi_instance: false` 不变。只发喵喵商店，真机升级待验证。
+
+发布 run `42189169910` 成功，`v0.6.1` 固定包装 `f5a32533deaafb149a4fb14229e5467a8594f367`，
+源码 `b993ed59f594a935be056a5194579e528d468262`。最终 LPK 完整下载 78,883,328 字节，
+SHA256 `36bf5f1888c5d677bea29c6bca8485919c781d3bcad2f05d56d245ee90e89e78`，
+与 GitHub API 和喵喵回执一致；实包许可、资源、clean CGO0 metadata 及隔离 root 首装/升级/
+不安全路径拒绝 suite 全部通过。以上不代替盒子真机升级。
 
 ## 0.6.0：OpenCode 选择导入
 
