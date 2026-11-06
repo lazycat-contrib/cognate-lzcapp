@@ -20,7 +20,7 @@ build:
 release:
   use_github_release_notes: false
   store_changelog_format: plain
-  changelog_template: 'Cognate {{.Version}}：新增 cc-switch schema23/24 OpenCode v1 配置选择导入，完整审阅 provider、模型、精确上下文与凭据槽。来源密钥和 header 原值不迁移，保存后独立补充，不自动应用设备。v2 和扩展字段仍明确拒绝；桌面和 CLI 导入须配套升级。沿用原管理员、OIDC、主密钥与数据目录。仅喵喵商店，官方关闭，真机升级待验证。'
+  changelog_template: 'Cognate {{.Version}}：导入支持按来源与客户端筛选，重复提示合并、技术详情按需展开，修复 cc-switch 大库预览与确认后提交失败。管理员可在后台启停备份、设置自动周期和 S3 目标，保存后生效，无需重启。补充 GitHub token 获取说明，已关联的 OIDC 不再重复提示绑定，并显示验证后的账号名称。同一数据目录仅允许一个服务端；恢复密钥仍需单独准备，完整恢复尚未交付。沿用原账号、主密钥与数据目录；仅发布喵喵商店。'
 images: []
 stores:
   official:
